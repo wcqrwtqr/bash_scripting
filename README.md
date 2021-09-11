@@ -16,12 +16,12 @@ Used this script to loop over 70 gauges txt files and extract the values and pro
 Used the below command to do the looping in the terminal after putting all the required files in a folder and running the command
 
 ``` bash
-for file in *.pdf; do getGaugesData $file ;done
+# Make sure you are inside the folder where the txt files are in
+for file in *.txt; do getGaugesData $file ;done
 ```
 
 ## getPrices
 This script is used to use cURL and go to gold prices site and crude oil prices and scrap the web page and filter for the needed prices of the day.
-
 After making the script executable and moved to /usr/bin/ or /usr/local/bib/ then you can simply run the command in terminal like below.
 
 ```bash
@@ -29,9 +29,9 @@ getPrices
 ```
 A questions will be asked and needs to be answered:
 * Which price you are looking to read? 
-* 1) Oil Price type 1
-* 2) Gold Price type 2
-* 3) Both (leave blank and hit enter)
+1) Oil Price type 1
+2) Gold Price type 2
+3) Both (leave blank and hit enter)
 
 ## yttrim
 This script is used to download youtube video with a selected duration and start so instead of downloading the whole 1 or 2 hour video instead I can ask the script to download the video starting on time hh:mm:ss and for duration of X sec and the file downloaded will be the small portion you need.
