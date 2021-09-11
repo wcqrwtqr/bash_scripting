@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Author: Mohammed Albatati
+# Date: 22 Aug 2021
+# Gold Price
+# This script is to get get the html page form "https://www.apmex.com/gold-price" and scrab the current gold price
+# Added the ability to choose to get the prices of the oil or the gold or both at the dame time using the case option
+# modified 7th Sep 2021
+
+gold () {
+  prices=$(curl -s https://www.apmex.com/gold-price | pup span.current text{})
+  echo $prices | xargs -n 4 | awk 'BEGIN{print "Gold", "Silver"}{print $1, $2}'
+}
+
+oil () {
+  oillabel=$(curl -v 'https://markets.businessinsider.com/commodities/oil-price?type=wti' \
+    2>/dev/null| pup "span.price-section__label text{}" |tr -d ' ')
+  oilprice=$(curl -v 'https://markets.businessinsider.com/commodities/oil-price?type=wti' \
+    2>/dev/null| pup "span.price-section__current-value text{}" |tr -d ' ')
+  echo "$oillabel is: $oilprice "
+}
+
+echo "What price you are looking for:"
+read -p "Oil or Gold or Both: " num
+echo "==========="
+case $num in 
+  [gG]old|GOLD) gold;;
+  [oO]il|OIL) oil;;
+  [bB]oth|"") gold && oil;;
+  *) echo "Wrong selection";;
+esac
+
+

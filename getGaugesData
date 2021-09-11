@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Author: Mohammed Albatati
+# Date: 01 Sep 2021
+# Get the values from gauges row data 
+# This scrip should look in to the gauges row data and extract all the max, min duration of the pressure, and termperature
+# the aim of the script is to go through all the header and extract the client name, well name, start date and end date
+# Some the values are getting some \r\ values at the end of when using awk so I used the "tr -d '\r\' to remove it "
+# Also I used several sed to remove the charectors like #, ;, spaces and tabs but I think using tr will be easier
+# Modified: 03 Sep 2021
+
+# Get the full path of the file so we can run the script from anywhere
+filename="`pwd`/$1"
+
+# Note that we are skipping 10 lines to avoid the header
+client=$(awk 'NR<15 {print $0}' "$filename" | grep -iF "client" | awk '{print $0}'| tr -d '#; \t' | tr -d '\r\' |sed 's/Client://g')
+well=$(awk 'NR<15 {print $0}' "$filename" | grep -iF "well" | awk '{print $0}'| tr -d '#; \t' | tr -d '\r\' | sed 's/Well://g') 
+# Below code is to get the serial and clean it from all the tabs and other characters - also removing the Calibration Date and any thing after it using the ".*" dot asterisk to get all the things after the word
+# I tried to use tr but it replaces all the letters in the word selected and makes the results look very wired 
+serialNumber=$(awk 'NR<15 {print $0}' "$filename" | grep -iF "serial" | awk '{print $0}' | tr -d '#; \t' |tr -d '\r\' | sed 's/SerialNumber://g' | sed 's/CalibrationDate:.*//g')
+units=$(awk 'NR<15 {print $0}' "$filename" | grep -iF "psi" | awk '{print $0}'| tr -d '#; \t'| tr -d '\r\' | sed 's/psia//g' )
+
+# Get the max values using awk
+maxTemp=$(awk 'NR>15 {if ($4 > max) max=$4} END {print max}' "$filename"| tr -d '\r\' | tr -d ' ')
+maxPress=$(awk 'NR>15 {if ($3 > max) max=$3} END {print max}' "$filename"| tr -d ' '| tr -d '\r\')
+
+startDate=$(awk 'NR==15 {print $1}' "$filename"| sed 's/ //g'| tr -d '\r\')
+endDate=$(awk 'END {print $1}' "$filename"| sed 's/ //g'| tr -d '\r\')
+
+# Writing the file name so we can easily find the file if there is a mistake 
+echo $1 | tee -a /tmp/gaugeDataLog
+echo "_______________________________"| tee -a /tmp/gaugeDataLog
+# check if the vlaues are not null 
+# Using tee to make two actions as the same time (one for standard output and one for writing to file)
+[ -z $client ] && echo "No client reported" || echo $client | tee -a /tmp/gaugeDataLog
+[ -z $well ] && echo "No well reported" || echo $well| tee -a /tmp/gaugeDataLog
+ 
+echo $serialNumber| tee -a /tmp/gaugeDataLog
+echo "Job stars:" $startDate | tee -a /tmp/gaugeDataLog
+echo "Ends on:" $endDate| tee -a /tmp/gaugeDataLog
+echo $units| tee -a /tmp/gaugeDataLog
+echo $maxPress      $maxTemp| tee -a /tmp/gaugeDataLog
+echo "==============================="| tee -a /tmp/gaugeDataLog
+# Writing the values to a file in a csv format with ","
+echo "$client,$well,$serialNumber,$startDate,$endDate,$units,$maxPress,$maxTemp" >> /tmp/gaugesDataCSV
+
+
+

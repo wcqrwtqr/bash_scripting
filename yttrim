@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Author: Mohammed Albatati
+# Date: 11 Sep 2021
+# Download a clip from youtube using the start time and duration 
+# This script will use youtube-dl and ffmpeg to download the small part needed from youtube instead of downloading the whole video
+set -e
+echo "Please past the youtube link"
+read -p "Youtube link: " link_yt
+[ -z $link_yt ] && echo "No link passed" && exit 1 
+echo "Please choose the start time HH:MM:SS"
+read -p "Start time: " start_time
+[ -z $start_time ] && echo "No proper time passed" && start_time=00:00
+echo "Please choose the duration in sec"
+read -p "Duration: " duration
+[ -z $duration ] && echo "No duration was passed" && exit 1 
+(( $duration <= 0 )) && echo "Duration should be more than 0" && exit 1 
+
+get_youtube(){
+	temp_download=$(youtube-dl --get-url -f best $link_yt)
+	temp_title=$(youtube-dl --get-title $link_yt)
+	$(ffmpeg -i $temp_download -ss $start_time -t $duration "${temp_title}_trim.mp4") 
+}
+trap "Erro $LINENO" ERR
+
+get_youtube
+
+
