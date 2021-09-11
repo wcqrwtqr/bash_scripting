@@ -1,0 +1,20 @@
+#! /bin/bash
+
+# Author: Mohammed Albatati
+# Date: 11 Sep 2021
+# Get the crew ID's and initial information 
+# This script is to get the ID of my crew quickly by refrencing the csv file put on the tmp/crewID.csv
+
+set -e
+filePath="/tmp/crewID.csv"
+input=$1
+# Check for the file containing the data if available or not 
+[ ! -f $filePath ] && echo 'File not available at location - script aborting' && exit 1
+
+getID(){
+	# awk to get the field needed and pass it to grep for the user input 
+	grepID= awk -F"," '{print $1,$2,$3,$4,$7}' "/tmp/crewID.csv" | grep -i "$input" 
+	echo $grepID
+}
+
+getID
