@@ -1,0 +1,29 @@
+#! /bin/bash
+
+# Author: Mohammed Albatati
+# Date: 14 Sep 2021
+# Get the Asset and crew details using fzf and case to get the option to do what you need
+# Modified : 
+
+set -e
+# [ ! -f $filePath ] && echo 'File not available at location - script aborting' && exit 1
+
+fzfID(){
+	grepID= awk -F"," '{print $1"|"$2"|"$3"|"$4"|"$5"|"$6}' "/tmp/assetID.csv" | fzf
+	echo $grepID
+}
+
+fzfCrew(){
+	grepID= awk -F"," '{print $1,$2,$3,$4,$7}' "/tmp/crewID.csv" | fzf
+	echo $grepID
+}
+
+echo "Type 1) Asset 2) Crew"
+read -p "Select: " num
+echo "==========="
+case $num in 
+  1) fzfID;;
+  2) fzfCrew;;
+  *) echo "Wrong selection";;
+esac
+

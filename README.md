@@ -46,3 +46,19 @@ Three questions will be asked and needs to be answered:
 * Provide the starting point like (00:01:20) starting first minute and 20 sec (If left blank then it will start from the beginning)
 * Provide the duration (should be more than 1 sec)
 
+
+## fzfID
+This script is used to fzf quickly search the company assets and crew ID's very fast using the fzf option.
+I added the case to select between either 1) Asset or 2) Crew then the fzf will be available to fuzzy search quickly.
+
+
+```bash
+fzfID
+```
+A questions will be asked and needs to be answered:
+* What is the type of search you are looking for:
+1) Asset
+2) Crew
+*) Nothing
+
+
