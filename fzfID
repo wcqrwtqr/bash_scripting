@@ -3,27 +3,53 @@
 # Author: Mohammed Albatati
 # Date: 14 Sep 2021
 # Get the Asset and crew details using fzf and case to get the option to do what you need
-# Modified : 
+# Modified : 19 Sep 21
+# Modification: added the ability to get generate the csv file from the excel sheet and put it in the temp directory
 
 set -e
-# [ ! -f $filePath ] && echo 'File not available at location - script aborting' && exit 1
+# Ensure the asset csv file is available and if not then create it 
+[ ! -f "/tmp/assetID.csv" ] && echo 'File not available at temp directory  Creating a new csv file' && xlsx2csv "/Users/mohammedalbatati/Desktop/FAR Master list REV2.xlsx" "/tmp/assetID.csv" 
+[ ! -f "/tmp/crewID.csv" ] && echo 'File not available at temp directory  Creating a new csv file' && xlsx2csv "/Users/mohammedalbatati/Documents/OilSERV files/Personnel/Compensation/Master Calculation sheet/Reference files/ref.xlsx" "/tmp/crewID.csv" 
+[ ! -f "/tmp/po.csv" ] && echo 'File not available at temp directory  Creating a new csv file' && xlsx2csv "/Users/mohammedalbatati/Desktop/Jobs/PO tracking sheet.xlsx" "/tmp/po.csv" 
+[ ! -f "/tmp/revenue.csv" ] && echo 'File not available at temp directory  Creating a new csv file' && xlsx2csv "/Users/mohammedalbatati/Documents/OilSERV files/Commercial Proposal/Revenue tracking sheet.xlsx" -s 3 > "/tmp/revenue.csv" 
+[ ! -f "/Users/mohammedalbatati/Downloads/OiLSERV JobID V2.csv" ] && echo 'File not available at Download directory' && exit 1
 
 fzfID(){
-	grepID= awk -F"," '{print $1"|"$2"|"$3"|"$4"|"$5"|"$6}' "/tmp/assetID.csv" | fzf
+	grepID= awk -F"," '{print $1"|"$2"|"$3"|"$4"|"$5"|"$6"|"$9"|"$10"|"$11"|"$12"|"$13"|"$14"|"$15"|"$15"|"$16}' "/tmp/assetID.csv" | fzf -m
 	echo $grepID
 }
 
 fzfCrew(){
-	grepID= awk -F"," '{print $1,$2,$3,$4,$7}' "/tmp/crewID.csv" | fzf
+	grepID= awk -F"," '{print $0}' "/tmp/crewID.csv" | fzf -m
+	# grepID= awk -F"," '{print $1"|"$2"|"$3"|"$4"|"$7}' "/tmp/crewID.csv" | fzf -m
 	echo $grepID
 }
 
-echo "Type 1) Asset 2) Crew"
+fzfJobID(){
+	grepID= awk -F"," '{print $3"|"$4"|"$5"|"$6"|"$7"|"$8"|"$9"|"$10"|"$11"|"$13"|"$14"|"$15}' "/Users/mohammedalbatati/Downloads/OiLSERV JobID V2.csv" | fzf -m
+	# grepID= awk -F"," '{print $3|$4|$5|$6|$7|$8|$9|$10|$11|$12}' "/Users/mohammedalbatati/Downloads/OiLSERV JobID V2.csv" | fzf -m
+	echo $grepID
+}
+
+fzfpo(){
+	grepPO= awk -F"," '{print $0}' "/tmp/po.csv" | fzf -m
+	echo $grepPO
+}
+
+fzfrevenue(){
+	grepRev= awk -F"," '{print $1"|"$2"|"$3"|"$4"|"$5"|"$6"|"$7}' "/tmp/revenue.csv" | fzf -m
+	echo $grepRev
+}
+
+echo "Type 1-Asset, 2-Crew, 3-PO 4-Revenue 5-JobID"
 read -p "Select: " num
 echo "==========="
 case $num in 
   1) fzfID;;
   2) fzfCrew;;
+  3) fzfpo;;
+  4) fzfrevenue;;
+  5) fzfJobID;;
   *) echo "Wrong selection";;
 esac
 
