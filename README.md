@@ -59,6 +59,9 @@ A questions will be asked and needs to be answered:
 * What is the type of search you are looking for:
 1) Asset
 2) Crew
+3) PO
+4) Revenue values
+5) JobID
 *) Nothing
 
 
