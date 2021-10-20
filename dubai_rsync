@@ -10,10 +10,12 @@ set -e
 
 byEquipment(){
 	fzfEquipment=`awk -F"," '{print $1}' "/tmp/folders.txt" | fzf`
+    echo "Syncing the folder $fzfEquipment"
 	rsync -av --progress "/Volumes/MPro_FIles/KIU-WTC/KIU SWT/$fzfEquipment"  "/Volumes/My Passport for Mac/KIU Equipement/Dubai Server/KIU-WTC/KIU SWT/"
 }
 
 allEquipment(){
+    echo "Syncing all folders"
 	rsync -av --ignore-existing --progress /Volumes/MPro_FIles/KIU-WTC/KIU\ SWT /Volumes/My\ Passport\ for\ Mac/KIU\ Equipement/Dubai\ Server/KIU-WTC
 }
 
