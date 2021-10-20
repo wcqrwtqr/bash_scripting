@@ -1,0 +1,26 @@
+#! /bin/bash
+
+# Author Mohammed Albatati
+# Date created: 20 Oct 2021
+# Description: This script takes the time sheet of the current month and the last month and moves it to the work_excel_script folder so we can execute the python script
+# Also the script changes the file name to ensure the two files are in the correct place inside the folder with the correct name
+
+# Requirements: down the two files and put them in the Download folder
+
+# Selecting the last month file
+echo "Select last month excel sheet"
+sleep 1
+find ~/Downloads -maxdepth 1 -type f -name "*.xlsx" | fzf | xargs -I{} cp {} ~/work_excel_scripts/opsStat/lastMonth.xlsx
+
+echo "Select current month excel sheet"
+sleep 1
+find ~/Downloads -maxdepth 1 -type f  -name "*.xlsx" | fzf | xargs -I{} cp {} ~/work_excel_scripts/opsStat/currentMonth.xlsx
+
+# The code below runs the python code from the its folder and the output  will be directed to desktop
+python3 /Users/mohammedalbatati/work_excel_scripts/opsStat/opsStat.py
+echo "Work ended"
+
+
+
+
+
