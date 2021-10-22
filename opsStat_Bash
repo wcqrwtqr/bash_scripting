@@ -24,7 +24,7 @@ find ~/Downloads -maxdepth 1 -type f  -name "*.xlsx" | fzf --height=20% --border
 
 # Using the new script for getting the work done using xlwings 😎
 python3 /Users/mohammedalbatati/work_excel_scripts/opsStat/opsStatWX.py
-echo "Work ended"
+echo "${color}Work ended${reset}"
 
 
 
