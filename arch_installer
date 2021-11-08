@@ -64,14 +64,24 @@ user(){
     echo "Use this command to edit the wheelEDITOR=nano visudo"
 }
 
+bootloader(){
+    mkinitcpio -p linux
+    pacman -S grub
+    grub-install /dev/sda
+    grub-mkconfig -o /boot/grub/grub.cfg
+    echo "You can exit now and unmount then reboot"
+}
+
+
 echo "What type of sync you need:"
-read -p "1-Mounting, 2-Install pacstrap, 3-Configuration : " num
+read -p "1-Mounting, 2-Install pacstrap, 3-Configuration 4-user 5-install the bootloader: " num
 echo "==========="
 case $num in 
   1) mounting;;
   2) installing_arch_pacstrp;;
   3) configuration;;
   4) user;;
+  5) bootloader;;
   *) echo "Wrong selection";;
 esac
 
