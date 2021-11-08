@@ -47,10 +47,21 @@ configuration(){
     sleep 1
     ln -s /usr/share/zoneinfo/Asia/Baghdad /etc/localtime
     hwclock --systohc
-    sleep 1
-    echo "mohammed" >> /etc/hostname
-    sleep 1
+}
 
+user(){
+    echo "mohammed" > /etc/hostname
+    sleep 1
+    pacman -Syu sudo bash-completion networkmanager
+    sleep 1
+    useradd -m -g users -G wheel,storage,power,log -s /bin/bash mohammed
+    sleep 1
+    echo "change the sudo password"
+    passwd
+    echo "change the user password"
+    passwd mohammed
+    systemctl enable NetworkManager
+    echo "Use this command to edit the wheelEDITOR=nano visudo"
 }
 
 echo "What type of sync you need:"
@@ -60,6 +71,7 @@ case $num in
   1) mounting;;
   2) installing_arch_pacstrp;;
   3) configuration;;
+  4) user;;
   *) echo "Wrong selection";;
 esac
 
