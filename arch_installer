@@ -13,33 +13,34 @@ set -e
 
 mounting(){
     mkswap /dev/sda2
-    sleep 1
+    sleep 2
     swapon /dev/sda2
-    sleep 1
+    sleep 2
     mkfs.vfat /dev/sda1
-    sleep 1
+    sleep 2
     mkfs.ext4 /dev/sda3
-    sleep 1
+    sleep 2
     mount /dev/sda3 /mnt
     mkdir -p /mnt/boot
-    sleep 1
+    sleep 2
     mount /dev/sda1 /mnt/boot
-    sleep 1
-    swapon /dev/sda2
+    sleep 2
     echo "mounting finished"
+    sleep 2
     lsblk
 }
 
 installing_arch_pacstrp(){
-    pacstrap -i /mnt base base-devel linux linux-firmware vim git
-    sleep 5
+    pacstrap -i /mnt base base-devel linux linux-firmware vim
     echo "Installing the packages"
+    sleep 5
     genfstab -U -p /mnt >> /mnt/etc/fstab
     cat /mnt/etc/fstab
+    echo "Please next command use arch-chroot"
 }
 
 configuration(){
-    echo "en_US.UTF-8" >> /etc/locale.gen
+    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
     echo "LANG=en_US.UTF-8" >> /etc/locale.conf
     locale-gen
     export LANG=en_US.UTF-8
