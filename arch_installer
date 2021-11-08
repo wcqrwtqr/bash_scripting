@@ -1,0 +1,65 @@
+#! /bin/bash
+
+# Author: Mohammed Albatati
+# Date: 20 Oct 2021
+# sync the sever by folder instead of syncing all the folders all at once
+
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+set -e
+# Ensure the asset csv file is available and if not then create it 
+# [ ! -f "/tmp/folders.txt" ] && echo 'File not available at temp directory  Creating a new folders file' && ls "/Volumes/MPro_FIles/KIU-WTC/KIU SWT" > "/tmp/folders.txt" && echo "File created successfully"
+
+mounting(){
+    mkswap /dev/sda2
+    sleep 1
+    swapon /dev/sda2
+    sleep 1
+    mkfs.vfat /dev/sda1
+    sleep 1
+    mkfs.ext4 /dev/sda3
+    sleep 1
+    mount /dev/sda3 /mnt
+    mkdir -p /mnt/boot
+    sleep 1
+    mount /dev/sda1 /mnt/boot
+    sleep 1
+    swapon /dev/sda2
+    echo "mounting finished"
+    lsblk
+}
+
+installing_arch_pacstrp(){
+    pacstrap -i /mnt base base-devel linux linux-firmware vim git
+    sleep 5
+    echo "Installing the packages"
+    genfstab -U -p /mnt >> /mnt/etc/fstab
+    cat /mnt/etc/fstab
+}
+
+configuration(){
+    echo "en_US.UTF-8" >> /etc/locale.gen
+    echo "LANG=en_US.UTF-8" >> /etc/locale.conf
+    locale-gen
+    export LANG=en_US.UTF-8
+    sleep 1
+    ln -s /usr/share/zoneinfo/Asia/Baghdad /etc/localtime
+    hwclock --systohc
+    sleep 1
+    echo "mohammed" >> /etc/hostname
+    sleep 1
+
+}
+
+echo "What type of sync you need:"
+read -p "1-Mounting, 2-Install pacstrap, 3-Configuration : " num
+echo "==========="
+case $num in 
+  1) mounting;;
+  2) installing_arch_pacstrp;;
+  3) configuration;;
+  *) echo "Wrong selection";;
+esac
+
+
