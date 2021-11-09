@@ -12,6 +12,8 @@ set -e
 # [ ! -f "/tmp/folders.txt" ] && echo 'File not available at temp directory  Creating a new folders file' && ls "/Volumes/MPro_FIles/KIU-WTC/KIU SWT" > "/tmp/folders.txt" && echo "File created successfully"
 
 mounting(){
+    echo "Make sure to create three drives with cfdisk command sda1 512M and sda2 2G and sda3 no need to change the types"
+    echo "START MOUNTING THE DRIVES"
     mkswap /dev/sda2
     sleep 2
     swapon /dev/sda2
@@ -28,15 +30,18 @@ mounting(){
     echo "mounting finished"
     sleep 2
     lsblk
+    echo "Now move to the next stage of installing arch"
 }
 
 installing_arch_pacstrp(){
     pacstrap -i /mnt base base-devel linux linux-firmware vim
     echo "Installing the packages"
-    sleep 5
+    sleep 2
     genfstab -U -p /mnt >> /mnt/etc/fstab
     cat /mnt/etc/fstab
     echo "Please next command use arch-chroot"
+    echo "Download the git folder "
+    echo "go to the next stage of configuration"
 }
 
 configuration(){
@@ -47,6 +52,7 @@ configuration(){
     sleep 1
     ln -s /usr/share/zoneinfo/Asia/Baghdad /etc/localtime
     hwclock --systohc
+    echo "go to the next stage of user creation"
 }
 
 user(){
@@ -61,7 +67,7 @@ user(){
     echo "change the user password"
     passwd mohammed
     systemctl enable NetworkManager
-    echo "Use this command to edit the wheelEDITOR=nano visudo"
+    echo "Use this command to edit the wheel (EDITOR=nano visudo)"
 }
 
 bootloader(){
