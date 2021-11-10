@@ -1,0 +1,113 @@
+#! /bin/bash
+
+# Author: Mohammed Albatati
+# Date: 20 Oct 2021
+# sync the sever by folder instead of syncing all the folders all at once
+
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+set -e
+# Ensure the asset csv file is available and if not then create it 
+# [ ! -f "/tmp/folders.txt" ] && echo 'File not available at temp directory  Creating a new folders file' && ls "/Volumes/MPro_FIles/KIU-WTC/KIU SWT" > "/tmp/folders.txt" && echo "File created successfully"
+
+mounting(){
+    echo "Make sure to create three drives with cfdisk command sda1 512M and sda2 2G and sda3 no need to change the types"
+    echo "START MOUNTING THE DRIVES"
+    # mkfs.vfat /dev/sda1
+    mkfs.vfat -F 32 /dev/sda1
+    sleep 2
+    mkfs.ext4 /dev/sda3
+    sleep 2
+    mkswap /dev/sda2
+    sleep 2
+    swapon /dev/sda2
+    sleep 2
+    mount /dev/sda3 /mnt
+    mkdir -p /mnt/gentoo
+    sleep 2
+    mount /dev/sda3 /mnt/gentoo
+    sleep 2
+    echo "mounting finished"
+    sleep 2
+    lsblk
+    sleep 2
+    cd /mnt/gentoo
+    sleep 2
+    echo "cd'ed to /mnt/gentoo , Now download the tar ball"
+    sleep 2
+    links https://www.gentoo.org/downloads/mirrors/
+}
+
+unpack_tarball(){
+    echo "open the tarball"
+    tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
+}
+
+make_conf(){
+    echo "Modify the make.conf to add the recommendation"
+    vim /mnt/gentoo/etc/portage/make.conf 
+}
+
+select_mirrors(){
+    echo "add the mirrors to the make.conf"
+    mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf
+    echo "make the repos.conf"
+    mkdir --parents /mnt/gentoo/etc/portage/repos.conf
+    echo "copy the repors.conf from portage to gentoo.conf"
+    cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
+    echo "Dereference"
+    sleep 1
+    cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
+    echo "Mont the needed files systems"
+    sleep 1
+    mount --types proc /proc /mnt/gentoo/proc
+    sleep 1
+    mount --rbind /sys /mnt/gentoo/sys
+    sleep 1
+    mount --make-rslave /mnt/gentoo/sys
+    sleep 1
+    mount --rbind /dev /mnt/gentoo/dev
+    sleep 1
+    mount --make-rslave /mnt/gentoo/dev
+    sleep 1
+    mount --bind /run /mnt/gentoo/run
+    sleep 1
+    mount --make-slave /mnt/gentoo/run
+
+}
+
+entering_new_env(){
+    echo "Entering env"
+    chroot /mnt/gentoo /bin/bash
+    source /etc/profile
+    export PS1="(chroot) ${PS1}"
+    echo "mounting the partition"
+    mount /dev/sda1 /boot
+    echo "syncing web"
+    emerge-webrsync
+}
+
+
+bootloader(){
+    mkinitcpio -p linux
+    pacman -S grub
+    grub-install /dev/sda
+    grub-mkconfig -o /boot/grub/grub.cfg
+    echo "You can exit now and unmount then reboot"
+}
+
+
+echo "What type of sync you need:"
+read -p "1-Mounting, 2-Install pacstrap, 3-Configuration 4-user 5-install the bootloader: " num
+echo "==========="
+case $num in 
+  1) mounting;;
+  2) unpack_tarball;;
+  3) make_conf;;
+  4) select_mirrors;;
+  5) entering_new_env;;
+  *) echo "Wrong selection";;
+esac
+
+
