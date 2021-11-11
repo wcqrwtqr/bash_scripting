@@ -46,7 +46,7 @@ unpack_tarball(){
 
 make_conf(){
     echo "Modify the make.conf to add the recommendation"
-    vim /mnt/gentoo/etc/portage/make.conf 
+    vi /mnt/gentoo/etc/portage/make.conf 
 }
 
 select_mirrors(){
@@ -99,7 +99,7 @@ bootloader(){
 
 
 echo "What type of sync you need:"
-read -p "1-Mounting, 2-Install pacstrap, 3-Configuration 4-user 5-install the bootloader: " num
+read -p "1-MountingDONOT USE, 2-Uppacking_tar, 3-make_conf 4-select_mirrors 5-entering_new_env: " num
 echo "==========="
 case $num in 
   1) mounting;;
