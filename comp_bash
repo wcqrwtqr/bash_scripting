@@ -2,8 +2,12 @@
 
 # Author Mohammed Albatati
 # Date created: 29 Oct 2021
-# Description: This script takes the time sheet of the current month and the last month and moves it to the work_excel_script folder so we can execute the python script
-# Also the script changes the file name to ensure the two files are in the correct place inside the folder with the correct name
+# Description: This script takes the time sheet of the current month and the
+# last month and moves it to the work_excel_script folder so we can execute the
+# python script
+# Also the script changes the file name to ensure the two files are in the
+# correct place inside the folder with the correct name
+
 
 # Requirements: down the two files and put them in the Download folder
 set -e
