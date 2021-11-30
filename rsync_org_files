@@ -1,0 +1,14 @@
+#! /bin/bash
+
+# Author Mohammed Albatati
+# Date created: 30 Nov 2021
+# Description: This script rsyn the files from my org mode and adds it to the my-org-files folder for backup reason
+
+
+# Adding color to the text
+color=`tput setaf 1`
+reset=`tput sgr0`
+# Selecting the file
+echo "${color} Syncing the files ${reset}"
+sleep 1
+rsync -av --progress ~/org ~/my-org-files
