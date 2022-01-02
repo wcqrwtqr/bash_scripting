@@ -71,4 +71,25 @@ A questions will be asked and needs to be answered:
  5) JobID
 *) Nothing
 
+* Shrink pdf script
 
+A very useful script found on the internet which helps reduce the pdf file size from the terminal using bash scripting.
+
+Run the chmod +x on the file and add the script in your PATH
+
+  #+begin_src bash
+    chmod +x shrikpdf
+    cp shrikpdf /usr/local/bin/
+  #+end_src
+
+- Example of usage ( the number at the end will play a role of the quality and the size )
+
+  #+begin_src bash
+    shrikpdf ~/Downloads/filename.pdf ~/Desktop/shriked_120dpi.pdf 120
+
+    shrikpdf ~/Downloads/filename.pdf ~/Desktop/shriked_300pdi.pdf 300
+  #+end_src
+
+  - Case one (120) will create a pdf with resolution of 120 and case two of 300 will be better resolution, you can change the number to match your needs.
+
+See the License comments inside the script file
