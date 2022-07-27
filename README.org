@@ -93,3 +93,18 @@ Run the chmod +x on the file and add the script in your PATH
   - Case one (120) will create a pdf with resolution of 120 and case two of 300 will be better resolution, you can change the number to match your needs.
 
 See the License comments inside the script file
+* Killing mouse PID (logitch) - kill_mouse
+Using Logitch mouse and key board there come some times that I need to restart the process (kill it) from the activities monitor in my mac so the mouse can act correctly, and for that I made this script to find the PID number and kill it and print the new PID process to ensure that the script has successfully executed
+
+In the script I made the name of the process in a separate variable so any one can use the same script but need to change the mouse process name first
+
+#+begin_src bash
+# Find the name of the process and change the name in the below variable to meet your needs
+mousePID="logiMgrDaemon --l"
+#+end_src
+
+The main script for finding the PID is ps then grep the name of the  process and using the -v for grep to remove any other instance of the grep process having the same search term then awk the PID column
+
+#+begin_src bash
+ps aux | grep -i "logiMgrDaemon --l" | grep -v rg | grep -v grep | awk '{print $2}'
+#+end_src
