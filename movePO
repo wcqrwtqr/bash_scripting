@@ -1,0 +1,25 @@
+#! /bin/bash
+
+# Author Mohammed Albatati
+# Date created: 7 Jun 22
+# Description: This script takes the the files from the download folder and moves it to the PO folder for the year of 2022
+
+# Requirements: down the files and put them in the Download folder
+
+# Adding color to the text
+color=`tput setaf 1`
+reset=`tput sgr0`
+# Selecting the file
+echo "Select ${color}file ${reset}"
+sleep 1
+
+# find ~/Downloads -maxdepth 1 -type f -name "PO*" | fzf --height=10% --border='vertical'| xargs -I{} cp {} ~/Documents/OilSERV\ files/zz\ -\ Old/PO/PO\ 2022/
+#
+
+find ~/Downloads -maxdepth 1 -type f -name "PO*" | fzf --height=10% --border='vertical'| while read -r file
+do
+    # echo ${file}
+    echo $file
+    splitName=$(awk -F"/" '{print $0}' $file)
+    echo ${splitName}
+    done

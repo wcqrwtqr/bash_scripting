@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# Author: Mohammed Albatati
+# Date: 27 July 2022
+# Script to find the PID of the logitich mouse and key board and kills it when it hangs and needs rebooting
+
+# Name of the mouse process
+mousePID="logiMgrDaemon --l"
+
+# get the PID for the logitich mouse and removing the grep command by using the -v command for any instance of grep or rg
+# temp="$(ps aux | grep -i "logiMgrDaemon --l" | grep -v rg | grep -v grep | awk '{print $2}')"
+temp="$(ps aux | grep -i "$mousePID" | grep -v rg | grep -v grep | awk '{print $2}')"
+
+# Check of the temp value is empty or not
+if [[ ! -z "$temp" ]]; then
+    # Value of temp is not empty
+    echo " Found PID= $temp, killing the mouse process and restarting"
+    # kill the process by PID
+    kill "$temp"
+    # Sleep to allow the process to start again
+    sleep 1
+    echo "Wating for new process to start..."
+    sleep 2
+    # Get the new PID of the process to assure the started again
+    newID="$(ps aux | grep -i "logiMgrDaemon --l" | grep -v rg | grep -v grep | awk '{print $2}')"
+    echo "Mouse and keyboard restarted, new PID is $newID"
+else
+    # Somehting went wrong the value is empty, need to check the correct name of the mounse
+    echo "Empty value of PID, check the correct name of the process from the activities monitor"
+fi
