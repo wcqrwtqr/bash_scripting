@@ -108,3 +108,6 @@ The main script for finding the PID is ps then grep the name of the  process and
 #+begin_src bash
 ps aux | grep -i "logiMgrDaemon --l" | grep -v rg | grep -v grep | awk '{print $2}'
 #+end_src
+* Download book pages from web site
+Bash script used to download the pages from web site based on the number of pages (start to end) and put them in the current folder.
+Take care before using to ensure the link format so it can work properly.
