@@ -1,0 +1,73 @@
+#! /usr/bin/env bash
+set -euo pipefail
+
+# Created: 2026-01-27
+# Code below I want to read a list of asset SN and run it in
+# this script so It finds the certification from the server
+# and copy it to the current directory when it is needed
+# flages: None, so it will reach in the maintenance folder
+# flage: -l is for the lifting folder
+# flage: -p is for the PCE
+# flage: -n is dry run
+##  How to use:
+# 1- Go to the folder you wish to copy the files from the server to.
+# 2- In the downloads folder fill the file ~/Downloads/list_of_asset_array.txt
+# with the SN of the assets, use the shell script I made to find the SN of the
+# assets using `fzfneos` which I made with fuzzy find from database
+# 3- Run the command `neos_array_copy` and put any flage or keep empty
+### Dependencies
+### Must use neozfzf shell scrip to find the SN of the assets
+
+
+# Default: whole Maintenance tree
+SEARCH_DIR='/Volumes/WL-SL/02 Slickline/02 Maintenance/'
+
+# Default action: real copy
+ACTION_CMS=(cp)
+
+# Parse flags (can combine, last one wins)
+DRY_RUN=0
+while getopts ":pl" opt; do
+    case "$opt" in
+        p)
+            SEARCH_DIR='/Volumes/WL-SL/02 Slickline/02 Maintenance/PCE'
+            ;;
+        l)
+            SEARCH_DIR='/Volumes/WL-SL/02 Slickline/02 Maintenance/LIFTING GEAR/'
+            ;;
+        n)
+            DRY_RUN=1
+            ;;
+        \?)
+            echo "Usage: $(basename "$0") [-p] [-l] [-n]" >&2
+            exit 1
+            ;;
+    esac
+done
+
+# If dry-run, use ls instead of cp
+if [[ $DRY_RUN -eq 1 ]]; then
+    ACTION_CMS=(ls -l)
+    echo "Dry run: showing files would by copied"
+fi
+
+# File containing asset list (one per line)
+ASSET_FILE="$HOME/Downloads/list_of_asset_array.txt"
+
+# Read file lines into an array
+mapfile -t assets < "$ASSET_FILE"
+
+for asset in "${assets[@]}"; do
+    [[ -z "$asset" ]] && continue
+    echo "asset is: $asset"
+    # Count the number of files found
+    count=$(fd -e pdf "$asset" "$SEARCH_DIR" -E '*EXPIRED' | wc -l)
+    echo "Found $count files"
+    if [[ $DRY_RUN -eq 1 ]]; then
+        # Dry run with ls // not working properly
+        fd -e pdf "$asset" "$SEARCH_DIR" -E '*EXPIRED' -x "${ACTION_CMS[@]}" {}
+    else
+        # Copy the files to the current directory
+        fd -e pdf "$asset" "$SEARCH_DIR" -E '*EXPIRED' -x "${ACTION_CMS[@]}" {} .
+    fi
+done

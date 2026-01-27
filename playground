@@ -1,0 +1,65 @@
+#! /usr/bin/env bash
+set -euo pipefail
+
+# Code below I want to get a list of asset SN and run it in
+# this script so 
+# aray=(
+# 24A01785
+# 24A01784
+# 24A01783
+# 24A01782
+# 24A01781
+# )
+
+# for asset in "${aray[@]}"; do
+#     echo "asset are: $asset"
+#     fd -e pdf $asset '/Volumes/WL-SL/02 Slickline/02 Maintenance/PCE' -exec cp {} .
+# done
+# Default: whole Maintenance tree
+SEARCH_DIR='/Volumes/WL-SL/02 Slickline/02 Maintenance/'
+
+# Default action: real copy
+ACTION_CMS=(cp)
+
+# Parse flags (can combine, last one wins)
+DRY_RUN=0
+while getopts ":pl" opt; do
+    case "$opt" in
+        p)
+            SEARCH_DIR='/Volumes/WL-SL/02 Slickline/02 Maintenance/PCE'
+            ;;
+        l)
+            SEARCH_DIR='/Volumes/WL-SL/02 Slickline/02 Maintenance/PCE/LIFTING GEAR'
+            ;;
+        n)
+            DRY_RUN=1
+            ;;
+        \?)
+            echo "Usage: $(basename "$0") [-p] [-l] [-n]" >&2
+            exit 1
+            ;;
+    esac
+done
+
+# If dry-run, use ls instead of cp
+if [[ $DRY_RUN -eq 1 ]]; then
+    ACTION_CMS=(ls -l)
+    echo "Dry run: showing files would by copied"
+fi
+
+# File containing asset list (one per line)
+ASSET_FILE="$HOME/Downloads/list_of_asset_array.txt"
+
+# Read file lines into an array
+mapfile -t assets < "$ASSET_FILE"
+
+for asset in "${assets[@]}"; do
+    [[ -z "$asset" ]] && continue
+    echo "asset is: $asset"
+    if [[ $DRY_RUN -eq 1 ]]; then
+        fd -e pdf "$asset" "$SEARCH_DIR" -x "${ACTION_CMS[@]}" {}
+    else
+        fd -e pdf "$asset" "$SEARCH_DIR" -E '*EXPIRED' -x "${ACTION_CMS[@]}" {} .
+        # fd -e pdf "$asset" "$SEARCH_DIR" -x cp {} .
+    fi
+done
