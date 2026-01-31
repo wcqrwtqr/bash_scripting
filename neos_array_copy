@@ -17,6 +17,7 @@ set -euo pipefail
 # 3- Run the command `neos_array_copy` and put any flage or keep empty
 ### Dependencies
 ### Must use neozfzf shell scrip to find the SN of the assets
+# 20260131 - Update: added color to the output 
 
 
 # Default: whole Maintenance tree
@@ -27,7 +28,7 @@ ACTION_CMS=(cp)
 
 # Parse flags (can combine, last one wins)
 DRY_RUN=0
-while getopts ":pl" opt; do
+while getopts ":pln" opt; do
     case "$opt" in
         p)
             SEARCH_DIR='/Volumes/WL-SL/02 Slickline/02 Maintenance/PCE'
@@ -36,6 +37,8 @@ while getopts ":pl" opt; do
             SEARCH_DIR='/Volumes/WL-SL/02 Slickline/02 Maintenance/LIFTING GEAR/'
             ;;
         n)
+            # make a dry run with no copy involved, to see the files about to be
+            # copied to the folder.
             DRY_RUN=1
             ;;
         \?)
@@ -59,10 +62,16 @@ mapfile -t assets < "$ASSET_FILE"
 
 for asset in "${assets[@]}"; do
     [[ -z "$asset" ]] && continue
-    echo "asset is: $asset"
     # Count the number of files found
     count=$(fd -e pdf "$asset" "$SEARCH_DIR" -E '*EXPIRED' | wc -l)
-    echo "Found $count files"
+    # Color the output to be better looking
+    if [[ $count -eq 0 ]]; then
+        # printf "Asset is: \033[33m$asset\033[0m, found       \e[31m0 files\e[0m\n"
+        echo -e "Search for asset SN: \033[33m$asset\033[0m, found \033[31m$count files\e[0m"
+    else
+        echo -e "Search for asset SN: \033[33m$asset\033[0m, found \033[36m$count files\e[0m"
+    fi
+    # echo "Found $count files"
     if [[ $DRY_RUN -eq 1 ]]; then
         # Dry run with ls // not working properly
         fd -e pdf "$asset" "$SEARCH_DIR" -E '*EXPIRED' -x "${ACTION_CMS[@]}" {}
