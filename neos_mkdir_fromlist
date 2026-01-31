@@ -1,0 +1,16 @@
+#! /usr/bin/env bash
+set -euo pipefail
+
+# Created 20260127
+# Take the SN from a file at ~/Downloads/list_of_asset_array.txt
+# and create folder for each SN 
+
+ASSET_FILE="$HOME/Downloads/list_of_asset_array.txt"
+
+mapfile -t assets < "$ASSET_FILE"
+
+for asset in "${assets[@]}"; do
+    [[ -z "$asset" ]] && continue
+    echo "Create folder for: $asset"
+    mkdir $asset
+done
