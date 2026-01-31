@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name:right-to-left 
+# key: rtf
+# --
+[[elisp:my/arabic-text-direction-right][Right-to-left]]
+[[elisp:my/arabic-text-direction-left][Left-to-right]]

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name:aggregateTable
+# key:<agg
+# --
+#+BEGIN: aggregate :table "`(current-kill 0)`" :cols "${1:colAgg} sum(${2:Col});%.1f sum(${3:Col});%.1f"
+#+END

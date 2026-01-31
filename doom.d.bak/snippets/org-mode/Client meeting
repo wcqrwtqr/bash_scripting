@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: Client meeting
+# key:cm
+# --
+- Date time: `(format-time-string "%Y-%m-%d")`
+- Location:$0
+- Attendees:
+- Agenda:
+- Minutes:
+- Actions:

@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: arabichead
+# key: <arabic
+# --
+#+begin_src emacs-lisp :results none
+(setq bidi-paragraph-direction 'right-to-left)
+#+end_src
+
+#+begin_src emacs-lisp :results none
+(setq bidi-paragraph-direction 'left-to-right)
+#+end_src

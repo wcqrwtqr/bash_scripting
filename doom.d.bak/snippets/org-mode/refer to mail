@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: refer to mail
+# key:rtm
+# --
+refer to mail (`(current-kill 0)`)
