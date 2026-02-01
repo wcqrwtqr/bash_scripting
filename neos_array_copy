@@ -23,6 +23,13 @@ set -euo pipefail
 # Default: whole Maintenance tree
 SEARCH_DIR='/Volumes/WL-SL/02 Slickline/02 Maintenance/'
 
+# Create the file and empty it if available
+> ./progress.txt
+
+# cat "created on: Today \n\n" > progress.txt
+printf "Created on: $(date) \n" >> progress.txt
+
+
 # Default action: real copy
 ACTION_CMS=(cp)
 
@@ -40,6 +47,7 @@ while getopts ":pln" opt; do
             # make a dry run with no copy involved, to see the files about to be
             # copied to the folder.
             DRY_RUN=1
+            rm progress.txt
             ;;
         \?)
             echo "Usage: $(basename "$0") [-p] [-l] [-n]" >&2
@@ -66,15 +74,17 @@ for asset in "${assets[@]}"; do
     count=$(fd -e pdf "$asset" "$SEARCH_DIR" -E '*EXPIRED' | wc -l)
     # Color the output to be better looking
     if [[ $count -eq 0 ]]; then
-        # printf "Asset is: \033[33m$asset\033[0m, found       \e[31m0 files\e[0m\n"
-        echo -e "Search for asset SN: \033[33m$asset\033[0m, found \033[31m$count files\e[0m"
+        echo -e "Search for asset SN: \033[33m$asset\033[0m, found \033[31m$count files\e[0m" 
+        echo "Search for asset SN: $asset, found $count files" >> progress.txt
     else
-        echo -e "Search for asset SN: \033[33m$asset\033[0m, found \033[36m$count files\e[0m"
+        echo -e "Search for asset SN: \033[33m$asset\033[0m, found \033[36m$count files\e[0m" 
+        echo "Search for asset SN: $asset, found $count files" >> progress.txt
     fi
     # echo "Found $count files"
     if [[ $DRY_RUN -eq 1 ]]; then
         # Dry run with ls // not working properly
-        fd -e pdf "$asset" "$SEARCH_DIR" -E '*EXPIRED' -x "${ACTION_CMS[@]}" {}
+        # fd -e pdf "$asset" "$SEARCH_DIR" -E '*EXPIRED' -x "${ACTION_CMS[@]}" {}
+        fd -e pdf "$asset" "$SEARCH_DIR" -E '*EXPIRED'  # this shows better output
     else
         # Copy the files to the current directory
         fd -e pdf "$asset" "$SEARCH_DIR" -E '*EXPIRED' -x "${ACTION_CMS[@]}" {} .
