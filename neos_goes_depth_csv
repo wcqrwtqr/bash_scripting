@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+source /usr/local/bin/bash_colors.sh
+
+#Date:20260207
+#Code to read the csv file from the GOES monitor and get the status
+#like Max depth, tension, speed etc
+
+# Check if there is any arguement passed to the code 
+if [[ $# -lt 1 ]]; then
+    echo -e "${RED} You need to pass at least one file name${NC}"
+    exit 1
+fi
+
+# Loop over all the files passed 
+for file; do
+    if [[ ! -f "$file" ]]; then
+        echo -e "${RED} Error: '$file' is not a file or does not exist${NC}"
+        continue
+    fi
+
+    echo -e "${CYAN}Processing: $file${NC}"
+
+    # The file comes with values separated by , so sed to replace the
+    # commas , to . (Example 67,9 to be 67.9)
+
+    if head -n 2 "$file" | grep -q ,; then
+        echo -e "${MAGENTA}Substitute , to .${NC}"
+        sed -i '' 's/,/./g' "$file"
+    fi 
+
+    awk -F";" 'BEGIN {printf "Date\t\tTime\t\tspeed\ttension\tdepth\tcount\n"}
+  NR>=2 {if($6>maxs) maxs=$6; if($5>maxt) maxt=$5; if($4>maxd) maxd=$4;}
+  END { printf "%s\t%s\t%.1f\t%.1f\t%d\t%d\n", $1,$2, maxs+0, maxt+0,maxd+0, NR}' "$file"
+
+done

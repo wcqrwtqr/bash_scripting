@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Created: 20260203
+# This code will check the SN of the assets in a file called check_asset_exist.txt
+# and compare it with the databaase.
+# The output is stdout and will putput the SN that are not available
+
+if [[ ! -f "$HOME/org/Exported_database_2026_noes.csv" ]]; then
+  echo 'Database not available at ~/org/Exported_database_2026_noes.csv'
+  exit 1
+fi
+if [[ ! -f "$HOME/Downloads/check_asset_exist.txt" ]]; then
+  echo 'Create ~/Downloads/check_asset_exist.txt'
+  exit 1
+fi
+
+CSV_FILE="$HOME/org/Exported_database_2026_noes.csv"
+LIST_FILE="$HOME/Downloads/check_asset_exist.txt"
+
+awk -F',' '
+    NR==FNR {
+        if (FNR==1) next      # skip CSV header
+        sn[$2] = 1
+        next
+    }
+    {
+        gsub(/^[ \t]+|[ \t]+$/, "", $1)
+    }
+    !($1 in sn) && $1 != "" {
+        print $1
+    }
+' "$CSV_FILE" "$LIST_FILE"

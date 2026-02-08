@@ -1,0 +1,48 @@
+#! /usr/bin/env bash
+source /usr/local/bin/bash_colors.sh
+
+# Date: 20260208
+# This code is to find the empty folders in the ROO daily reports and report
+# back the missing status of submission to client
+
+if ! mount | grep -q WL-SL ; then
+    echo -e "${RED}The mount /Volumes/WL-SL/ not available${NC}"
+    exit 1
+fi
+
+main_path_1="/Volumes/WL-SL/02 Slickline/01 Jobs/BECL BP/Unit1/Daily Report/2026/"
+main_path_2="/Volumes/WL-SL/02 Slickline/01 Jobs/BECL BP/Unit2/Daily Report/2026/"
+
+if [[ ! -d "${main_path_1}" || ! -d "${main_path_2}"  ]]; then
+    echo -e "${RED}The daily report forlder is not available not available${NC}"
+    exit 1
+fi 
+
+check_report() {
+    local label="$1"
+    local response="$2"
+    if [[ -z "$response" ]]; then
+        echo -e "${GREEN}No missing ${label}${NC}"
+    else
+        echo -e "${MAGENTA}${label}${NC}"
+        printf "%s\n" "${response}"
+    fi
+}
+
+# Will check for the folder for the final report and the SGS report if empty or not 
+missing_final_1=$(find "${main_path_1}" -type d -ipath "*Final report*" -empty -and -not -ipath "*/Support*")
+mssing_sgs_1=$(find "${main_path_1}" -type d -ipath "*sgs submission*" -empty -and -not -ipath "*/Support*")
+missing_final_2=$(find "${main_path_2}" -type d -ipath "*Final report*" -empty -and -not -ipath "*/Support*")
+mssing_sgs_2=$(find "${main_path_2}" -type d -ipath "*sgs submission*" -empty -and -not -ipath "*/Support*")
+
+echo -e "${YELLOW}====================Unit-1=======================${NC}"
+check_report "Final report in Unit-1" "${missing_final_1}"
+check_report "SGS results in Unit-1" "${mssing_sgs_1}"
+echo -e "${BLUE}====================Unit-2=======================${NC}"
+check_report "Final report in Unit-2" "${missing_final_2}"
+check_report "SGS results in Unit-2" "${mssing_sgs_2}"
+
+
+
+
+
