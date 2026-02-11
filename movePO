@@ -22,4 +22,4 @@ do
     echo $file
     splitName=$(awk -F"/" '{print $0}' $file)
     echo ${splitName}
-    done
+done

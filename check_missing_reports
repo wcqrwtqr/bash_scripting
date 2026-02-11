@@ -38,11 +38,7 @@ mssing_sgs_2=$(find "${main_path_2}" -type d -ipath "*sgs submission*" -empty -a
 echo -e "${YELLOW}====================Unit-1=======================${NC}"
 check_report "Final report in Unit-1" "${missing_final_1}"
 check_report "SGS results in Unit-1" "${mssing_sgs_1}"
+# check_report "Raw data in Unit-1" "${raw_data_1}"
 echo -e "${BLUE}====================Unit-2=======================${NC}"
 check_report "Final report in Unit-2" "${missing_final_2}"
 check_report "SGS results in Unit-2" "${mssing_sgs_2}"
-
-
-
-
-
