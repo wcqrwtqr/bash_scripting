@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+source /usr/local/bin/bash_colors.sh
+
+# This code is used to go throught the folders in the server and get all the files that are
+# expired and move it to EXPIRED directory
+# no after I disabled many of thre modes, and run the profiler
+# Examples:
+# * **Dry run (default):** `./move_expired.sh $1 $2` 
+# * **Dry run (default):** `./move_expired.sh 20250718 /path/to/folder`  (Prints what *would* be moved.)
+# * **Move the files:** `./move_expired.sh -m 20250718 /path/to/folder` (Moves the files.)
+# * **Explicit dry run:** `./move_expired.sh -d 20250718 /path/to/folder` (Prints what *would* be moved. Overrides -m)
+# * **Incorrect usage:** `./move_expired.sh` (Prints an error message.)
+# * **With an invalid option:** `./move_expired.sh -x 20250718` (Prints an error message.)
+
+# Date: 20260211 - Updated to have the folder path as a $2 arg
+
+# Default to dry run if no flags are provided
+DO_MOVE=false
+DRY_RUN=true
+
+# Process command-line arguments
+while getopts "md" opt; do
+  case $opt in
+  m)
+    DO_MOVE=true
+    DRY_RUN=false # If move is specified, it's not a dry run
+    ;;
+  d)
+    DRY_RUN=true
+    DO_MOVE=false # Dry run overrides move
+    ;;
+  \?)
+    echo "Invalid option: -$OPTARG" >&2
+    echo "Usage: $0 [-m] [-d] target_date"
+    exit 1
+    ;;
+  esac
+done
+
+# Remove the options from the argument list
+shift $((OPTIND - 1))
+
+# Check if the target date is provided as the first argument
+if [ -z "$1" ]; then
+  echo -e "${RED}Error: Target date must be provided as the first argument.${NC}"
+  echo "Usage: $0 [-m] [-d] target_date /path"
+  exit 1
+fi
+
+TARGET_DATE="$1"
+
+# Find all files starting with "EXP" followed by the target date.
+find $2 -type f -name "EXP ${TARGET_DATE}*" ! -path "*/EXPIRED/*" | while read -r file; do
+  # Extract the directory name
+  dir=$(dirname "$file")
+
+  # Create the EXPIRED directory if it doesn't exist
+  if [ ! -d "$dir/EXPIRED" ]; then
+    mkdir -p "$dir/EXPIRED"
+    echo -e "${GREEN}Created directory: $dir/EXPIRED${NC}"
+  fi
+
+  # Move the file to the EXPIRED directory
+  if $DO_MOVE; then
+    mv "$file" "$dir/EXPIRED/"
+    if [ $? -eq 0 ]; then
+      echo -e "${GREEN}Moved: $file to $dir/EXPIRED/${NC}"
+    else
+      echo -e "${RED}Error moving: $file${NC}"
+    fi
+  else
+    echo -e "${YELLOW}Dry Run: Would move: $file to $dir/EXPIRED/${NC}"
+  fi
+done
+
+echo -e "${MAGENTA}Script finished.${NC}"

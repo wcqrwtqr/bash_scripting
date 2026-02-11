@@ -1,0 +1,17 @@
+#! /usr/bin/env bash
+
+# Date: 20260210
+# This code findes the tree of the folder searched in 2026 in ROO Unit1 and Unit2
+# The code will loop over the folder of both units and output the tree of the
+# folder 
+
+# This code is for single well results, old mothod
+# find /Volumes/WL-SL/02\ Slickline/01\ Jobs/BECL\ BP/ -type d -and -path \
+#     "*/Daily Report/*" -path "*/2026/*" -name "*$1*" -exec tree -l {} \;
+
+
+# Loop over the arguments 
+for well in "$@"; do 
+find /Volumes/WL-SL/02\ Slickline/01\ Jobs/BECL\ BP/ -type d -and -path \
+    "*/Daily Report/*" -path "*/2026/*" -name "*$well*" -exec tree -l {} \;
+done

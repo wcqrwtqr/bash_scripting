@@ -1,0 +1,53 @@
+#! /usr/bin/env bash
+source /usr/local/bin/bash_colors.sh
+
+# Date: 20260210
+# This will be a main function I'll use it to call other functions for the NEOS
+# bash scripts I made so far
+
+
+echo -e "Choose:
+1-Reports Tree,                 args R-127 etc
+2-fzf Asset,                    Nan
+3-Check for missing reports,    Nan
+4-Copy array of files,          fill ~/Downloads/list_of_asset_array.txt
+5-GOES Depth,                   args select files
+6-GOES Depth loop,              Nan  will loop
+7-Check database,               fill ~/Downloads/check_asset_exist.txt
+8-Find SQB,                     args R-338 etc
+9-rsync server,                 Nan
+10-Sweeb expired files           args [-m|-d] 20251210"
+read -p "Select: " num
+echo "==========="
+
+function find-sqb() {
+    if [[ ! -d "/Volumes/WL-SL/02 Slickline/01 Jobs/BECL BP/SQB/"  ]]; then
+        echo -e "${RED}Folder SQB not available${NC}"
+        exit 1
+    fi
+    results=$(find "/Volumes/WL-SL/02 Slickline/01 Jobs/BECL BP/SQB/" -type f -name "*$1*")
+    if [[ -n  results ]]; then
+        printf "$results\n"
+        # echo $results
+    else
+        echo -e "${RED}No results found${NC}"
+    fi
+}
+
+function depth_loop() {
+    find . -type f -name "*.csv" -exec neos_goes_depth {} \;
+}
+
+case $num in
+  1) neos_tree_reports "$@";;
+  2) neosfzf "$@";;
+  3) check_missing_reports;;
+  4) neos_array_copy;;
+  5) neos_goes_depth "$@";;
+  6) depth_loop;;
+  7) neos_check_asset_in_database;;
+  8) find-sqb "$@";;
+  9) server_rsync;;
+  10) sweeb_expired_files "$@";;
+  *) echo "Wrong selection";;
+esac

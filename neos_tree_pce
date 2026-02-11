@@ -1,0 +1,13 @@
+#! /usr/bin/env bash
+
+# Date: 20260211
+# This code finds the given SN for the PCE (still under process as the folders
+# were not named properly ) 
+
+
+
+# Loop over the arguments 
+# for well in "$@"; do 
+# find /Volumes/WL-SL/02\ Slickline/01\ Jobs/BECL\ BP/ -type d -and -path \
+#     "*/Daily Report/*" -path "*/2026/*" -name "*$well*" -exec tree -l {} \;
+# done
