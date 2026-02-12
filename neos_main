@@ -7,18 +7,20 @@ source /usr/local/bin/bash_colors.sh
 
 
 echo -e "Choose:
-1-Reports Tree,                 args R-127 etc
+1-Reports Tree,                 Args   'R-127' etc
 2-fzf Asset,                    Nan
-3-Check for missing reports,    Nan
-4-Copy array of files,          fill ~/Downloads/list_of_asset_array.txt
-5-GOES Depth,                   args select files
-6-GOES Depth loop,              Nan  will loop
-7-Check database,               fill ~/Downloads/check_asset_exist.txt
-8-Find SQB,                     args R-338 etc
+3-Un-submitted reports,         Nan
+4-Copy array of files,          Fill   ~/Downloads/list_of_asset_array.txt
+5-GOES Depth,                   Args   select files
+6-GOES Depth loop,              Nan    will loop
+7-Check database,               Fill   ~/Downloads/check_asset_exist.txt
+8-Find SQB,                     Args   R-338 etc
 9-rsync server,                 Nan
-10-Sweeb expired files           args [-m|-d] 20251210"
+10-Sweeb expired files          Args   [-m|-d] 20251210 ./
+99-Make all html                Nan
+12-Find No-RQC reports          Nan"
 read -p "Select: " num
-echo "==========="
+echo "================================="
 
 function find-sqb() {
     if [[ ! -d "/Volumes/WL-SL/02 Slickline/01 Jobs/BECL BP/SQB/"  ]]; then
@@ -38,6 +40,20 @@ function depth_loop() {
     find . -type f -name "*.csv" -exec neos_goes_depth {} \;
 }
 
+function find-no-rqc() {
+    local path1="/Volumes/WL-SL/02 Slickline/01 Jobs/BECL BP/Unit1/Daily Report/2026/"
+    local path2="/Volumes/WL-SL/02 Slickline/01 Jobs/BECL BP/Unit2/Daily Report/2026/"
+    u1=$(find "${path1}" -type f -name "No-*.xlsx" -depth 2 -exec dirname {} \;)
+    u2=$(find "${path2}" -type f -name "No-*.xlsx" -depth 2 -exec dirname {} \;)
+    echo -e "${GREEN}=========Unit-1 NO-RQC==========\n${u1}${NC}"
+    echo -e "${YELLOW}=========Unit-2 NO-RQC==========\n${u2}${NC}"
+}
+
+function make-all() {
+    cd "$HOME/Desktop/html_generator/"
+    make all
+}
+
 case $num in
   1) neos_tree_reports "$@";;
   2) neosfzf "$@";;
@@ -49,5 +65,7 @@ case $num in
   8) find-sqb "$@";;
   9) server_rsync;;
   10) sweeb_expired_files "$@";;
+  99) make-all;;
+  12) find-no-rqc;;
   *) echo "Wrong selection";;
 esac
