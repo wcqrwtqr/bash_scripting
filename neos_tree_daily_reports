@@ -1,17 +1,42 @@
 #! /usr/bin/env bash
+source /usr/local/bin/bash_colors.sh
 
 # Date: 20260210
 # This code findes the tree of the folder searched in 2026 in ROO Unit1 and Unit2
 # The code will loop over the folder of both units and output the tree of the
-# folder 
+# folder
+# New update on 20260213 where I added more checks and output 
 
 # This code is for single well results, old mothod
 # find /Volumes/WL-SL/02\ Slickline/01\ Jobs/BECL\ BP/ -type d -and -path \
 #     "*/Daily Report/*" -path "*/2026/*" -name "*$1*" -exec tree -l {} \;
+ 
+# Update on 20260213
+well_dir="/Volumes/WL-SL/02 Slickline/01 Jobs/BECL BP/"
+# Check if the folder is available
+if [[ ! -d "$well_dir" ]]; then
+    echo "Folder ${well_dir} is not avilable"
+    exit 1
+fi 
+# Check if no arguments provided
+if [ $# -eq 0 ]; then
+    echo "Enter well names (space-separated):"
+    read -a wells
+else
+    wells=("$@")
+fi
 
-
-# Loop over the arguments 
-for well in "$@"; do 
-find /Volumes/WL-SL/02\ Slickline/01\ Jobs/BECL\ BP/ -type d -and -path \
-    "*/Daily Report/*" -path "*/2026/*" -name "*$well*" -exec tree -l {} \;
+# Loop over the arguments
+for well in "${wells[@]}"; do 
+    results=$(find "$well_dir" -type d -and -path "*/Daily Report/*" -path "*/2026/*" -name "*$well*" -exec tree -l {} \;)
+    if [[ -n "$results" ]]; then
+        printf "%s\n" "$results"
+    else
+        echo -e "${RED}No results found for '${well}'${NC}"
+    fi
 done
+# # Loop over the arguments 
+# for well in "$@"; do 
+# find /Volumes/WL-SL/02\ Slickline/01\ Jobs/BECL\ BP/ -type d -and -path \
+#     "*/Daily Report/*" -path "*/2026/*" -name "*$well*" -exec tree -l {} \;
+# done

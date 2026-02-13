@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Author: Mohammed Albatati
 # Date: 06 Jan 2024

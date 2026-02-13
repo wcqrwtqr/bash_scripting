@@ -7,32 +7,44 @@ source /usr/local/bin/bash_colors.sh
 
 
 echo -e "Choose:
-1-Reports Tree,                 Args   'R-127' etc
-2-fzf Asset,                    Nan
-3-Un-submitted reports,         Nan
-4-Copy array of files,          Fill   ~/Downloads/list_of_asset_array.txt
-5-GOES Depth,                   Args   select files
-6-GOES Depth loop,              Nan    will loop
-7-Check database,               Fill   ~/Downloads/check_asset_exist.txt
-8-Find SQB,                     Args   R-338 etc
-9-rsync server,                 Nan
-10-Sweeb expired files          Args   [-m|-d] 20251210 ./
-99-Make all html                Nan
-12-Find No-RQC reports          Nan"
+tree  - Reports Tree,                 Args   'R-127' etc
+2     - fzf Asset,                    Nan
+rep   - Un-submitted reports,         Nan
+4     - Copy array of files,          Fill   ~/Downloads/list_of_asset_array.txt
+dp    - GOES Depth,                   Args   select files
+dpl   - GOES Depth loop,              Nan    will loop
+7     - Check database,               Fill   ~/Downloads/check_asset_exist.txt
+sqb   - Find SQB,                     Args   R-338 etc
+9     - rsync server,                 Nan
+10    - Sweeb expired files           Args   [-m|-d] 20251210 ./
+99    - Make all html                 Nan
+rqc   - Find No-RQC reports           Nan"
 read -p "Select: " num
 echo "================================="
 
 function find-sqb() {
-    if [[ ! -d "/Volumes/WL-SL/02 Slickline/01 Jobs/BECL BP/SQB/"  ]]; then
+    local sqb_dir="/Volumes/WL-SL/02 Slickline/01 Jobs/BECL BP/SQB/"
+    # Check if the directory available or not!
+    if [[ ! -d "${sqb_dir}"  ]]; then
         echo -e "${RED}Folder SQB not available${NC}"
         exit 1
     fi
-    results=$(find "/Volumes/WL-SL/02 Slickline/01 Jobs/BECL BP/SQB/" -type f -name "*$1*")
-    if [[ -n  results ]]; then
-        printf "$results\n"
-        # echo $results
+    # TODO: make the find sqb in a separeate file and but in /local/bin
+    # TODO: make the sqb accept multiple arg like ./neos_tree_daily_reports 
+    # Check if the user passed an arg or not
+    if [ $# -eq 0 ]; then
+       echo "Enter well name to search its SQB:" 
+       read -r well
+       [[ -z "$well" ]] && { echo -e "${RED}No well entered.${NC}"; exit 1; }
     else
-        echo -e "${RED}No results found${NC}"
+       well="$1" 
+    fi
+    local results
+    results=$(find "$sqb_dir" -type f -name "*${well}*" 2>/dev/null)
+    if [[ -n  "$results" ]]; then
+        printf "%s\n" "$results"
+    else
+        echo -e "${RED}No results found for '$well'${NC}"
     fi
 }
 
@@ -55,17 +67,17 @@ function make-all() {
 }
 
 case $num in
-  1) neos_tree_reports "$@";;
+  tree) neos_tree_reports "$@";;
   2) neosfzf "$@";;
-  3) check_missing_reports;;
+  rep) check_missing_reports;;
   4) neos_array_copy;;
-  5) neos_goes_depth "$@";;
-  6) depth_loop;;
+  dp) neos_goes_depth "$@";;
+  dpl) depth_loop;;
   7) neos_check_asset_in_database;;
-  8) find-sqb "$@";;
+  sqb) find-sqb "$@";;
   9) server_rsync;;
   10) sweeb_expired_files "$@";;
   99) make-all;;
-  12) find-no-rqc;;
+  rqc) find-no-rqc;;
   *) echo "Wrong selection";;
 esac
