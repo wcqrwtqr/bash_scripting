@@ -15,7 +15,7 @@ dp    - GOES Depth,                   Args   select files
 dpl   - GOES Depth loop,              Nan    will loop
 7     - Check database,               Fill   ~/Downloads/check_asset_exist.txt
 sqb   - Find SQB,                     Args   R-338 etc
-9     - rsync server,                 Nan
+sync  - rsync server,                 Nan
 10    - Sweeb expired files           Args   [-m|-d] 20251210 ./
 99    - Make all html                 Nan
 rqc   - Find No-RQC reports           Nan"
@@ -75,7 +75,7 @@ case $num in
   dpl) depth_loop;;
   7) neos_check_asset_in_database;;
   sqb) find-sqb "$@";;
-  9) server_rsync;;
+  sync) server_rsync;;
   10) sweeb_expired_files "$@";;
   99) make-all;;
   rqc) find-no-rqc;;
