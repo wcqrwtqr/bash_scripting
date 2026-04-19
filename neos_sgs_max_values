@@ -1,0 +1,29 @@
+#! /usr/bin/env bash
+source /usr/local/bin/bash_colors.sh
+# Date 20260215
+# Loop over the sgs files and find the max temp and max pressure values
+#
+# Confirm passing an argument 
+if [[ $# -eq 0 ]]; then
+    echo "Error: Need to pass a file name"
+    exit 1
+fi
+
+# Loop over the args passed 
+for file in "$@"; do
+    # Check if the argument is a file
+    if [[ ! -f "$file" ]]; then
+        echo "Error: '$file' passed arg is no a file"
+        exit 10
+    fi 
+    # Check if the file ends with .txt extension
+    if [[ "$file" != *.txt ]]; then
+        echo "Error: '$file' des not ends with .txt"
+        exit 2
+    fi
+    echo -e "${GREEN}Processing SGS file: $file${NC}"
+    awk '
+    BEGIN {printf "Date\t\t\tMaxP(psi)\t\tMaxT(F)\t\tHours\t\n"}
+    NR>=30 {if($4>maxt) maxt=$4; if($3>maxp) maxp=$3}
+    END { if(maxt!=0 || maxp!=0) printf "%s\t\t\t%.1f\t\t%.1f\t\t%d\n", $1, maxp+0, maxt+0, (NR/3600);}' "$file"
+done

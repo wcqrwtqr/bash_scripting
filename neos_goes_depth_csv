@@ -18,7 +18,7 @@ for file; do
         continue
     fi
 
-    echo -e "${CYAN}Processing: $file${NC}"
+    echo -e "${CYAN}Processing Depth file: $file${NC}"
 
     # The file comes with values separated by , so sed to replace the
     # commas , to . (Example 67,9 to be 67.9)
